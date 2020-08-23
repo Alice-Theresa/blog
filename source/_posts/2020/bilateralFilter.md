@@ -75,4 +75,4 @@ float closeness = 1 - distance(colorAtPixel.xyz, colorAtCenter.xyz) / length(flo
 
 可以下载图片查看原图
 
-<img src="/images/bilateralFilter/Beauty.jpg">
+<img src="/images/2020/bilateralFilter/Beauty.jpg">

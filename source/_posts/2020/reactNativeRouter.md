@@ -4,10 +4,16 @@ date: 2020-08-23
 tags: React Native
 ---
 
-实现以下功能:
+React Native有两大路由框架，react-navigation和react-native-navigation
+第三方的路由使用起来并没有什么大问题，但对于原生和 RN 页面混合开发的项目来说，并不太友好
+因此面对高度复杂的场景，自定义一个的路由会是更好的选择
+
+以iOS为例，设计一个简易的原生路由
+
+将实现以下功能:
 push、pop、popToRoot、present、dismiss、switchTab
 
-且同时兼容原生以及RN之间的切换
+同时兼容原生以及RN页面之间的切换
 
 ### React Native部分
 

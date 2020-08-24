@@ -36,21 +36,21 @@ kernel void BilateralFilter(texture2d<float, access::read> inTexture [[texture(0
                             device float *input [[buffer(0)]],
                             uint2 gid [[thread_position_in_grid]])
 {
-    const short radius = input[0]; //卷积核半径
-    const float boxBlur = 1.0 / (2 * radius + 1) / (2 * radius + 1); //均值模糊(函数G)
-    const float sigma = 0.3; //sigma(σ)
+    const short radius = input[0]; // 卷积核半径
+    const float boxBlur = 1.0 / (2 * radius + 1) / (2 * radius + 1); // 均值模糊(函数G)
+    const float sigma = 0.3; // sigma(σ)
     const float coe = -0.5 / pow(sigma, 2);
     
     float weightSum = 0;
     float3 colorSum = float3(0, 0, 0);
-    const float4 colorAtCenter = inTexture.read(gid); //卷积核中心点颜色(RGBA)
+    const float4 colorAtCenter = inTexture.read(gid); // 卷积核中心点颜色(RGBA)
     
-    //对卷积核内的所有像素进行处理并累加
+    // 对卷积核内的所有像素进行处理并累加
     for (short x = -radius; x <= radius; x++) {
         for (short y = -radius; y <= radius; y++) {
             ushort2 pixel = ushort2(gid.x + x, gid.y + y);
             float4 colorAtPixel = inTexture.read(pixel);
-            float closeness = exp(pow(distance(colorAtPixel.xyz, colorAtCenter.xyz), 2)*coe);
+            float closeness = exp(pow(distance(colorAtPixel.xyz, colorAtCenter.xyz), 2) * coe);
             float weight = closeness * boxBlur;
             colorSum += colorAtPixel.rgb * weight;
             weightSum += weight;

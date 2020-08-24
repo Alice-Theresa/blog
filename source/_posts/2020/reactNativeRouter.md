@@ -4,6 +4,8 @@ date: 2020-08-23
 tags: React Native
 ---
 
+<img src="/images/2020/reactNativeRouter/cover.jpg">
+
 React Native有两大路由框架，react-navigation和react-native-navigation
 第三方的路由使用起来并没有什么大问题，但对于原生和 RN 页面混合开发的项目来说，并不太友好
 因此面对高度复杂的场景，自定义一个的路由会是更好的选择

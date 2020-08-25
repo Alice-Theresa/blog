@@ -10,9 +10,9 @@ React Native有两大路由框架，react-navigation和react-native-navigation
 第三方的路由使用起来并没有什么大问题，但对于原生和 RN 页面混合开发的项目来说，并不太友好
 因此面对高度复杂的场景，自定义一个的路由会是更好的选择
 
-以iOS为例，设计一个简易的原生路由
+以iOS为例，定制一个简易的原生路由
 
-将实现以下功能:
+将拥有以下功能:
 push、pop、popToRoot、present、dismiss、switchTab
 
 同时兼容原生以及RN页面之间的切换
@@ -172,5 +172,3 @@ ALCNavigationManager管理路由，这里包含两个字典，分别记录原生
     [self.navigationController pushViewController:vc animated:YES];
 }
 ```
-
-这样就实现了一个简单的由原生控制的路由，且能在RN和原生之间无缝切换

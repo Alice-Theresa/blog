@@ -94,7 +94,7 @@ NavigationBridge.setRoot({
 
 ### 原生部分
 
-主要有以下文件
+主要有以下4个类
 * ALCNativeViewController
 * ALCReactViewController
 * ALCNavigationBridge
@@ -102,7 +102,7 @@ NavigationBridge.setRoot({
 
 ALCNativeViewController和ALCReactViewController继承UIViewController，用于创建原生、RN的页面。
 
-ALCNavigationBridge实现具体桥接的方法，即setRoot、push、pop等。
+ALCNavigationBridge实现具体桥接的方法，即registerReactComponent、setRoot、push、pop等。
 
 ALCNavigationManager管理路由，这里包含两个字典，分别记录原生、RN的页面，同时提供注册、查找页面的方法。
 ```

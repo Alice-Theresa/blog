@@ -1,31 +1,37 @@
-# React Native 简易路由 续
+---
+title: React Native 简易路由 续
+date: 2020-09-17
+tags: React Native
+---
+
+<img src="/images/2020/reactNativeRouter2/cover.jpg">
 
 对简易路由进行升级，加入参数回传功能，同样的，将支持原生、RN之间的回传
 
-## 封装
+### 重构
 
 将Navigator单独抽离，新增构造方法，每一个页面都将拥有独自的navigator，screenID为唯一字符串
 
-```
+```javascript
 constructor(screenID, moduleName) {
-    this.screenID = screenID
-    this.moduleName = moduleName
-    this.resultListeners = undefined
-  }
+  this.screenID = screenID
+  this.moduleName = moduleName
+  this.resultListeners = undefined
+}
 ```
 
 异步的push方法
 
-```
+```javascript
 push = async (component, options) => {
   NavigationBridge.push(component, options)
   return await this.waitResult()
 }
 ```
 
-waitResult返回一个Promise，并存入队列中，等待pop回来的时候调用
+waitResult返回一个Promise，暂存并等待pop回来的时候调用
 
-```
+```javascript
 waitResult() {
   return new Promise((resolve) => {
     const listener = (data) => {
@@ -43,43 +49,43 @@ waitResult() {
 
 pop回来的时候根据结果来执行或取消
 
-```
-result(data) {
+```javascript
+execute(data) {
   this.resultListener(data)
 }
 
 unmount = () => {
-  this.resultListener = undefined
+  this.resultListener.cancel()
 }
 ```
 
-为了实现参数回传，需要增加一个setResult的桥接方法
+为了实现参数回传，需要增加一个setResult的桥接方法，将数据写入页面所对应栈的Model
 
-```
+```javascript
 setResult(data) {
   NavigationBridge.setResult(data)
 }
 ```
 
-## 监听回调通知
+### 监听回调通知
 
 原生路由调用pop后将会把结果发送给RN，这里为每一个页面加入监听，根据screenID来找到需要回调结果的页面，result_type来判断用否有传值
 
 另外将navigator注入，可直接从props中获取
 
-```
-function withNavigator(moduleName) {
-  return function (WrappedComponent) {
-    function FC(props, ref) {
+```javascript
+const withNavigator = (moduleName) => {
+  return (WrappedComponent) => {
+    const component = (props, ref) => {
       const { screenID } = props
       const navigator = new Navigator(screenID, moduleName)
       useEffect(() => {
-        const subscription = EventEmitter.addListener('NavigationEvent', (data) => { 
+        const subscription = EventEmitter.addListener('NavigationEvent', (data) => {
           if (data['screen_id'] === screenID && data['event'] === 'component_result') {
-            if (data['result_type'] === 'cancel') { 
+            if (data['result_type'] === 'cancel') {
               navigator.unmount()
             } else {
-              navigator.result(data['result_data'])
+              navigator.execute(data['result_data'])
             }
           }
         })
@@ -90,28 +96,27 @@ function withNavigator(moduleName) {
       const injected = {
         navigator
       }
-      return <WrappedComponent ref={ref} {...props} {...injected} /> 
+      return <WrappedComponent ref={ref} {...props} {...injected} />
     }
-    const FREC = React.forwardRef(FC)
-    return FREC
+    return React.forwardRef(component)
   }
 }
 ```
 
 注册前调用
 
-```
+```javascript
 let withComponent = withNavigator(appKey)(component)
 AppRegistry.registerComponent(appKey, () => withComponent)
 ```
 
-## 页面栈
+### 页面栈
 
 为UIViewController新增一个分类
 
-每次新建页面的时候都会随机生成一个screenID，这里用iOS的UUID方法来生成
+每次新建页面的时候都会随机生成一个screenID，这里用iOS的NSUUID方法来生成
 
-```
+```objc
 @interface UIViewController (ALC)
 
 @property (nonatomic, copy, readonly) NSString *screenID;
@@ -121,8 +126,9 @@ AppRegistry.registerComponent(appKey, () => withComponent)
 @end
 ```
 
-为ALCNavigationManager新增一个栈以及对应的方法
-```
+每个tab都有独立的栈，这里以1个tab为例，为ALCNavigationManager新增1个栈以及对应的方法
+
+```objc
 @property (nonatomic, strong, readonly) NSMutableArray<ALCStackModel *> *stack;
 
 - (void)push:(UIViewController *)vc;
@@ -131,7 +137,7 @@ AppRegistry.registerComponent(appKey, () => withComponent)
 
 其中栈的数据模型
 
-```
+```objc
 @interface ALCStackModel : NSObject
 
 @property (nonatomic, copy) NSString *screenID;
@@ -142,11 +148,11 @@ AppRegistry.registerComponent(appKey, () => withComponent)
 @end
 ```
 
-自定义UINavigationController，用willShowViewController监听页面的变化，将每一次变化的viewController入栈
+自定义UINavigationController，用didShowViewController监听页面的变化，将每一次变化的viewController入栈
 
-```
+```objc
 - (void)navigationController:(UINavigationController *)navigationController
-      willShowViewController:(UIViewController *)viewController
+       didShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated {
     [[ALCNavigationManager shared] push:viewController];
 }
@@ -156,7 +162,7 @@ AppRegistry.registerComponent(appKey, () => withComponent)
 
 如果pop的时候栈顶没有设置数据，即为取消返回，否则传值
 
-```
+```objc
 - (void)push:(UIViewController *)vc {
     ALCStackModel *model = [[ALCStackModel alloc] initWithScreenID:vc.screenID];
     if ([self.stack containsObject:model]) {
@@ -174,38 +180,32 @@ AppRegistry.registerComponent(appKey, () => withComponent)
 }
 ```
 
-## 使用
+### 使用
 
-### 从RN页返回传参，不管上一页是什么
+<font size=4>**从RN页返回传参，不管上一页是什么**</font>
 
-pop的时候把结果setResult
-```
-props.navigator.setResult({ qwe: 123 })
+```javascript
+props.navigator.setResult({ rn_key: "rn_value" })
 props.navigator.pop()
 ```
 
-### 从原生页返回传参，不管上一页是什么
+<font size=4>**从原生页返回传参，不管上一页是什么**</font>
 
-```
-- (void)pop {
-    [self setResultData:@{@"some_key": @"some_value"}];
-    [self.navigationController popViewControllerAnimated:YES];
-}
+```objc
+[self setResult:@{@"native_key": @"native_value"}];
+[self.navigationController popViewControllerAnimated:YES];
 ```
 
-### RN页获取结果
+<font size=4>**RN页获取结果**</font>
 
-对push方法await
-```
+```javascript
 const resp = await props.navigator.push('Detail')
 ```
 
-### 原生页获取结果
+<font size=4>**原生页获取结果**</font>
 
-原生页面重写这一方法
+重写方法
 
-```
+```objc
 - (void)didReceiveResultData:(NSDictionary *)data type:(nonnull NSString *)type
 ```
-
-

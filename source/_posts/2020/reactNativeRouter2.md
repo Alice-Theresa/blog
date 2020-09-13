@@ -129,9 +129,9 @@ AppRegistry.registerComponent(appKey, () => withComponent)
 每个tab都有独立的栈，这里以1个tab为例，为ALCNavigationManager新增1个栈以及对应的方法
 
 ```objc
-@property (nonatomic, strong, readonly) NSMutableArray<ALCStackModel *> *stack;
+@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSMutableArray *> *stacks;
 
-- (void)push:(UIViewController *)vc;
+- (void)push:(UINavigationController *)nav vc:(UIViewController *)vc;
 - (void)clear;
 ```
 
@@ -163,19 +163,20 @@ AppRegistry.registerComponent(appKey, () => withComponent)
 如果pop的时候栈顶没有设置数据，即为取消返回，否则传值
 
 ```objc
-- (void)push:(UIViewController *)vc {
+- (void)push:(UINavigationController *)nav vc:(UIViewController *)vc {
     ALCStackModel *model = [[ALCStackModel alloc] initWithScreenID:vc.screenID];
-    if ([self.stack containsObject:model]) {
-        NSUInteger index = [self.stack indexOfObject:model];
-        ALCStackModel *last = self.stack.lastObject;
-        [self.stack removeObjectsInRange:NSMakeRange(index + 1, self.stack.count - (index + 1))];
-        if (last.data) {
-            [vc didReceiveResultData:last.data type:@"ok"];
-        } else {
-            [vc didReceiveResultData:@{} type:@"cancel"];
-        }
-    } else {
-        [self.stack addObject:model];
+    NSMutableArray *stack = [self.stacks valueForKey:nav.screenID];
+    if (![stack containsObject:model]) {
+        [stack addObject:model];
+    } else if (stack.count > 1) {
+       NSUInteger index = [stack indexOfObject:model];
+       ALCStackModel *last = stack.lastObject;
+       [stack removeObjectsInRange:NSMakeRange(index + 1, self.stacks.count - 1)];
+       if (last.data) {
+           [vc didReceiveResultData:last.data type:@"ok"];
+       } else {
+           [vc didReceiveResultData:@{} type:@"cancel"];
+       }
     }
 }
 ```

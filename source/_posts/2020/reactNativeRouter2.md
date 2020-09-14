@@ -126,7 +126,7 @@ AppRegistry.registerComponent(appKey, () => withComponent)
 @end
 ```
 
-每个tab都有独立的栈，这里以1个tab为例，为ALCNavigationManager新增1个栈以及对应的方法
+每个tab都有独立的栈，为ALCNavigationManager新增栈以及对应的方法
 
 ```objc
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSMutableArray *> *stacks;
@@ -154,7 +154,7 @@ AppRegistry.registerComponent(appKey, () => withComponent)
 - (void)navigationController:(UINavigationController *)navigationController
        didShowViewController:(UIViewController *)viewController
                     animated:(BOOL)animated {
-    [[ALCNavigationManager shared] push:viewController];
+    [[ALCNavigationManager shared] push:navigationController vc:viewController];
 }
 ```
 
@@ -208,5 +208,5 @@ const resp = await props.navigator.push('Detail')
 重写方法
 
 ```objc
-- (void)didReceiveResultData:(NSDictionary *)data type:(nonnull NSString *)type
+- (void)didReceiveResultData:(NSDictionary *)data type:(NSString *)type
 ```

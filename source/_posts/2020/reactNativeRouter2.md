@@ -1,6 +1,6 @@
 ---
 title: React Native 简易路由 续
-date: 2020-09-17
+date: 2020-09-26
 tags: React Native
 ---
 
@@ -129,13 +129,13 @@ AppRegistry.registerComponent(appKey, () => withComponent)
 每个tab都有独立的栈，为ALCNavigationManager新增栈以及对应的方法
 
 ```objc
-@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSMutableArray *> *stacks;
+@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, NSMutableArray<ALCStackModel *> *> *stacks;
 
 - (void)push:(UINavigationController *)nav vc:(UIViewController *)vc;
 - (void)clear;
 ```
 
-其中栈的数据模型
+其中出入栈的数据模型
 
 ```objc
 @interface ALCStackModel : NSObject

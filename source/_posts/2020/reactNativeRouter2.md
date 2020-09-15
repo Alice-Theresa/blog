@@ -181,6 +181,9 @@ AppRegistry.registerComponent(appKey, () => withComponent)
 }
 ```
 
+在ALCNativeViewController中实现 setResult: 方法，设置参数到栈顶
+在ALCReactViewController中实现 didReceiveResultData:type: 方法，向React Native发送参数
+
 ### 使用
 
 <font size=4>**从RN页返回传参，不管上一页是什么**</font>

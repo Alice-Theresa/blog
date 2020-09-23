@@ -171,7 +171,7 @@ AppRegistry.registerComponent(appKey, () => withComponent)
     } else if (stack.count > 1) {
        NSUInteger index = [stack indexOfObject:model];
        ALCStackModel *last = stack.lastObject;
-       [stack removeObjectsInRange:NSMakeRange(index + 1, self.stacks.count - 1)];
+       [stack removeObjectsInRange:NSMakeRange(index + 1, stack.count - (index + 1))];
        if (last.data) {
            [vc didReceiveResultData:last.data type:@"ok"];
        } else {

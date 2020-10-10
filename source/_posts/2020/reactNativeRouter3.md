@@ -1,6 +1,6 @@
 ---
 title: React Native 简易路由 完
-date: 2020-10-25
+date: 2020-10-24
 tags: React Native
 ---
 
@@ -8,11 +8,11 @@ tags: React Native
 
 ### 封装
 
-我们将之前的路由封装成一个模块，这样子我们就可以通过npm包的方式在多个项目中重复使用，另外模块采用TypeScript开发
+我们将之前的路由封装成一个模块，这样子我们就可以通过npm包的方式在多个项目中重复使用，另外模块采用TypeScript
 
 ### 全局样式
 
-定义一个全剧样式的model
+定义一个全局样式的Model
 
 ```ts
 interface GlobalStyle {
@@ -28,7 +28,7 @@ interface GlobalStyle {
 }
 ```
 
-通过桥传给原生，原生使用该配置来设定全局样式，原生也需要一些工具方法，例如解析16进制字符串成对应的颜色
+通过桥传给原生，原生使用该配置来设定全局样式，同时也需要一些工具方法，例如解析16进制字符串成对应的颜色
 
 ```ts
 export const setStyle = (style: GlobalStyle) => {
@@ -40,18 +40,9 @@ export const setStyle = (style: GlobalStyle) => {
 
 声明一个路由，包含一个字典用于存储注册的页面以及对应的路径名
 
-可以通过一个query string来打开特定的页面并传参，例如
-
-```
-abc://path/to/somewhere?key=value
-```
-
-会解析成路径 /path/to/somewhere 以及参数 {key: value}
-
-同时支持Deep Link，当然，需要在Xcode中设置好对应的URL Schemes，并使用activate方法激活对应的scheme
-
 ```ts
 let active = false
+let hasHandleInitialURL = false
 const configs = new Map<string, string>()
 
 class Router {
@@ -100,8 +91,18 @@ class Router {
     }
     if (!active) {
       Router.uriPrefix = uriPrefix
+      if (!hasHandleInitialURL) {
+        hasHandleInitialURL = true
+        Linking.getInitialURL()
+          .then(url => {
+            if (url) {
+              Router.open(url)
+            }
+          })
+          .catch(err => console.error('An error occurred', err))
+      }
       Linking.addEventListener('url', this.routeEventHandler)
-      active = !active
+      active = true
     }
   }
 
@@ -109,7 +110,7 @@ class Router {
     if (active) {
       Router.uriPrefix = undefined
       Linking.removeEventListener('url', this.routeEventHandler)
-      active = !active
+      active = false
     }
   }
 
@@ -119,3 +120,24 @@ class Router {
 }
 ```
 
+路由支持Deep Link，使用前需要在Xcode中设置好对应的URL Schemes，并激活对应的scheme
+
+```ts
+router.activate('alc://')
+```
+
+可以通过一个queryString来打开特定的页面并传参，例如
+
+```ts
+Router.open('/path/to/somewhere?key=value')
+```
+
+会解析成路径 /path/to/somewhere 以及参数 {key: value}
+
+根据路径找到对应的页面并push出来
+
+在终端中运行该命令，让模拟器进行Deep Link跳转
+
+```
+xcrun simctl openurl booted "alc://Detail"
+```

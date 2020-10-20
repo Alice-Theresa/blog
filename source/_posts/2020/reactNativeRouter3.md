@@ -28,7 +28,7 @@ interface GlobalStyle {
 }
 ```
 
-通过桥传给原生，原生使用该配置来设定全局样式，同时也需要一些工具方法，例如解析16进制字符串成对应的颜色
+通过桥传给原生，原生使用该配置来设定全局样式，同时需要一些辅助函数，例如解析16进制字符串到对应的颜色
 
 ```ts
 export const setStyle = (style: GlobalStyle) => {
@@ -81,7 +81,7 @@ class Router {
   }
 
   clear = () => {
-    active = false
+    this.inactivate()
     configs.clear()
   }
 

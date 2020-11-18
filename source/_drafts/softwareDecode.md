@@ -1,6 +1,6 @@
 ---
 title: 软解码，末日已到
-date: 2021-02-26 
+date: 2020-11-21 
 tags: [FFmpeg, Metal, 音视频, 图像处理]
 ---
 
@@ -8,7 +8,7 @@ tags: [FFmpeg, Metal, 音视频, 图像处理]
 
 <img src="/images/2021/softwareDecode/error_decode.png">
 
-在电脑播放器里播放，发现是正常的
+在电脑播放器里播放，是正常的
 
 <img src="/images/2021/softwareDecode/normal_decode.png">
 

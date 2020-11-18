@@ -120,6 +120,8 @@ class Router {
 }
 ```
 
+其中addRoutePath方法将页面与路径名做绑定，在每一个页面初始化的时候注册
+
 路由支持Deep Link，使用前需要在Xcode中设置好对应的URL Schemes，并激活对应的scheme
 
 ```ts

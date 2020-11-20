@@ -12,7 +12,12 @@ tags: [FFmpeg, Metal, 音视频, 图像处理]
 
 <img src="/images/2021/softwareDecode/normal_decode.png">
 
-电脑采用硬解码模式播放，手机播放器采用FFmpeg软解码（CPU），将其切换至硬解码（SoC内置模块），播放正常。
+<p></p>
+<center>
+    <font color='gray'>《终将成为你》第5话</font>
+</center>
+
+电脑采用硬解码模式播放，手机播放器采用FFmpeg软解码，将其切换至硬解码，播放正常。
 在软解码模式下播放别的视频，播放正常
 仔细对比两个视频发现，播放异常的视频是采用10bit压制的
 

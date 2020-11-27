@@ -1,5 +1,5 @@
 ---
-title: 软解码，末日已到
+title: 软解码的末日
 date: 2020-11-21 
 tags: [FFmpeg, Metal, 音视频, 图像处理]
 ---

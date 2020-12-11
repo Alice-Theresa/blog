@@ -6,11 +6,11 @@ tags: [FFmpeg, Metal, 音视频, 图像处理]
 
 前阵子播放一个视频时发现是这样子的
 
-<img src="/images/2021/softwareDecode/error_decode.png">
+<img src="/images/2020/softwareDecode/error_decode.png">
 
 在电脑播放器里播放，是正常的
 
-<img src="/images/2021/softwareDecode/normal_decode.png">
+<img src="/images/2020/softwareDecode/normal_decode.png">
 
 <p></p>
 <center>
@@ -25,7 +25,7 @@ tags: [FFmpeg, Metal, 音视频, 图像处理]
 
 该视频主要参数为1080p yuv420 10bit，FFmpeg解码后的帧以AVFrame的形式存在，其中data数组中的头三位分别存放着yuv数据，另外可以看到10bit视频linesize为分辨率宽度的2倍
 
-<img src="/images/2021/softwareDecode/frame_info.jpg">
+<img src="/images/2020/softwareDecode/frame_info.jpg">
 
 播放器使用了Metal作为渲染层，其读取的纹理格式为MTLPixelFormatR8Unorm，即每个像素占用1个Byte，R8代表单像素8bit，U为unsigned，norm为归一化，即用[0.0, 1.0]代表着0-255色阶
 

@@ -4,7 +4,7 @@ date: 2021-03-26
 tags: [iOS]
 ---
 
-### Combine
+## Combine
 
 2019年，苹果推出了新一代UI框架SwiftUI，一并出场的还有Combine这个函数式编程库，在此之前，想在iOS平台上使用函数式编程有两个库，分别是RAC以及RxSwift。
 
@@ -16,12 +16,14 @@ Publisher主要有两种，一种是如Just、Future等一次性的“发布”�
 Subscriber就是用来订阅Publisher的“发布”
 而Operator介于两者之间，对“发布”的“内容”进行一系列的操作
 
-### 盒子
+## 盒子
 
 为了更好的理解，我们打个比喻，Publisher其实就是一个“盒子”
 有Just类型、Future类型等，里面可以装东西，如数字“1”
 
 Just(1)，这就是一个类型为Just的盒子装着数字1，我们对其订阅，则会进行“拆盒子”的动作，拿到盒子里面的东西
+
+**以下代码均忽略sink返回的Cancellable**
 
 ```swift
 Just(1).sink { value in
@@ -85,6 +87,8 @@ Just<String>(output: "A")
 ### switchToLatest
 
 既然有“升阶“，就有”降阶“, switchToLatest 会额外帮你拆掉最外面的“盒子”
+
+<img src="/images/2021/SwitftCombine/example.jpg">
 
 ```swift
 Just(1)
@@ -170,7 +174,7 @@ Just是没有error的一个“盒子”，error类型为Never，但有时候转�
 3. 使用replaceError直接替换成别的值
 
 
-### 每记
+## 每记
 
 在《每记》项目中，我们使用了SwiftUI + MVVM + Combine，配合三层架构使用（UI层，中间层以及数据层）
 
